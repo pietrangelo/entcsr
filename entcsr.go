@@ -29,14 +29,14 @@ func main() {
 	certName := os.Args[1]
 	keySize, er := rsa.GenerateKey(rand.Reader, 4096)
 
-	// Revocation list template
+	// Certificate template
 	crtTpl := x509.Certificate{
 		SerialNumber: big.NewInt(1),
 		Subject: pkix.Name{
 			Organization: []string{"Entando"},
 		},
 		NotBefore: time.Now(),
-		NotAfter: time.Now().Add(time.Hour * 24 * 365),
+		NotAfter: time.Now().Add(time.Hour * 24 * 365), // one year validity
 		KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
 		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
 		BasicConstraintsValid: true,
@@ -95,12 +95,15 @@ func main() {
 	if er != nil {
 		panic(er)
 	}
+
+	// Certificate signing request template
 	csr := x509.CertificateRequest{
 		RawSubject: asn1Parser,
 		EmailAddresses: []string{emailAddress},
 		SignatureAlgorithm: x509.SHA512WithRSA,
 	}
 
+	// Create certificate signing request
 	bytes, er := x509.CreateCertificateRequest(rand.Reader, &csr, keySize)
 	if er != nil {
 		panic(er)
