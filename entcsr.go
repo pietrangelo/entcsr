@@ -35,19 +35,18 @@ func main() {
 		Subject: pkix.Name{
 			Organization: []string{"Entando"},
 		},
-		NotBefore: time.Now(),
-		NotAfter: time.Now().Add(time.Hour * 24 * 365), // one year validity
-		KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		NotBefore:             time.Now(),
+		NotAfter:              time.Now().Add(time.Hour * 24 * 365), // one year validity
+		KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageCodeSigning},
 		BasicConstraintsValid: true,
 	}
 
 	// certificate
-	crt, er := x509.CreateCertificate(rand.Reader, &crtTpl, &crtTpl, pubKey(keySize),keySize)
+	crt, er := x509.CreateCertificate(rand.Reader, &crtTpl, &crtTpl, pubKey(keySize), keySize)
 	if er != nil {
 		log.Fatal("Failed to create certificate: %s", er)
 	}
-
 
 	crtFile, er := os.Create(certName + "-cert.crt")
 	if er != nil {
@@ -56,16 +55,14 @@ func main() {
 	pem.Encode(crtFile, &pem.Block{Type: "CERTIFICATE", Bytes: crt})
 	crtFile.Close()
 
-
 	if er != nil {
 		panic(er)
 	}
 	derKey := x509.MarshalPKCS1PrivateKey(keySize)
 	keyBlock := pem.Block{
-		Type: "RSA PRIVATE KEY",
+		Type:  "RSA PRIVATE KEY",
 		Bytes: derKey,
 	}
-
 
 	keyFile, er := os.Create(certName + "-key.key")
 	if er != nil {
@@ -83,12 +80,12 @@ func main() {
 	country := "IT"
 
 	subject := pkix.Name{
-		CommonName: commonName,
-		Country: []string{country},
-		Locality: []string{city},
-		Organization: []string{org},
+		CommonName:         commonName,
+		Country:            []string{country},
+		Locality:           []string{city},
+		Organization:       []string{org},
 		OrganizationalUnit: []string{orgUnit},
-		Province: []string{state},
+		Province:           []string{state},
 	}
 
 	asn1Parser, er := asn1.Marshal(subject.ToRDNSequence())
@@ -98,8 +95,8 @@ func main() {
 
 	// Certificate signing request template
 	csr := x509.CertificateRequest{
-		RawSubject: asn1Parser,
-		EmailAddresses: []string{emailAddress},
+		RawSubject:         asn1Parser,
+		EmailAddresses:     []string{emailAddress},
 		SignatureAlgorithm: x509.SHA512WithRSA,
 	}
 
@@ -112,7 +109,6 @@ func main() {
 	if er != nil {
 		panic(er)
 	}
-
 
 	pem.Encode(csrFile, &pem.Block{Type: "CERTIFICATE REQUEST", Bytes: bytes})
 	csrFile.Close()
