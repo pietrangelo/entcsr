@@ -1,0 +1,5 @@
+.idea
+*.iml
+entcsr-win.exe
+entcsr-lnx
+entcsr-osx
