@@ -8,7 +8,6 @@ import (
 	"crypto/x509/pkix"
 	"encoding/asn1"
 	"encoding/pem"
-	"log"
 	"math/big"
 	"os"
 	"time"
@@ -45,12 +44,12 @@ func main() {
 	// certificate
 	crt, er := x509.CreateCertificate(rand.Reader, &crtTpl, &crtTpl, pubKey(keySize), keySize)
 	if er != nil {
-		log.Fatal("Failed to create certificate: %s", er)
+		panic(er)
 	}
 
 	crtFile, er := os.Create(certName + "-cert.crt")
 	if er != nil {
-		log.Fatal("Error writing buffer to file: %s", er)
+		panic(er)
 	}
 	pem.Encode(crtFile, &pem.Block{Type: "CERTIFICATE", Bytes: crt})
 	crtFile.Close()
