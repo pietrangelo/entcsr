@@ -19,13 +19,13 @@ jobs:
         go-version: 1.15
 
     - name: Build for Windows AMD64
-      run: env GOOS=windows GOARCH=amd64 go build -o entcsr-win.exe -tags osusergo,netgo entcsr.go -v 
+      run: env GOOS=windows GOARCH=amd64 go build -v -o entcsr-win.exe -tags osusergo,netgo entcsr.go
     
     - name: Build for Mac OS X AMD64
-      run: env GOOS=darwin GOARCH=amd64 go build -o entcsr-osx -tags osusergo,netgo entcsr.go -v 
+      run: env GOOS=darwin GOARCH=amd64 go build -v -o entcsr-osx -tags osusergo,netgo entcsr.go
     
     - name: Build for Linux AMD64
-      run: env GOOS=linux GOARCH=amd64 go build -o entcsr-lnx.exe -tags osusergo,netgo entcsr.go -v 
+      run: env GOOS=linux GOARCH=amd64 go build -v -o entcsr-lnx.exe -tags osusergo,netgo entcsr.go
       
     - name: Test
       run: go test -v entcsr.go
